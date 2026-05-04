@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CLI 模式 - 学校汇演票务系统</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="cli-page">
+    <div class="cli-shell">
+      <div class="cli-header-bar">
+        <span>CLI · 学校汇演票务系统</span>
+        <div class="cli-header-actions">
+          <a class="cli-link" href="/cli-wiki.html" target="_blank" rel="noreferrer">帮助</a>
+          <a class="cli-link" href="/index.html">首页</a>
+        </div>
+      </div>
+      <section class="cli-terminal" aria-label="命令终端">
+        <div id="cli-output" class="cli-output" role="log" aria-live="polite"></div>
+        <div class="cli-quick-actions">
+          <button type="button" data-command="help">help</button>
+          <button type="button" data-command="whoami">whoami</button>
+          <button type="button" data-command="projects">projects</button>
+          <button type="button" data-command="project">project</button>
+          <button type="button" data-command="checkin-stats">checkin-stats</button>
+          <button type="button" data-command="checkin-logs">checkin-logs</button>
+          <button type="button" data-command="merch-products">merch-products</button>
+          <button type="button" data-command="merch-modes">merch-modes</button>
+        </div>
+        <div class="cli-input">
+          <div class="cli-prompt">$</div>
+          <input id="cli-command" class="cli-command" placeholder="输入命令，如：login admin admin123" autocomplete="off" />
+        </div>
+      </section>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/cli.js" type="module"></script>
+  </body>
+</html>

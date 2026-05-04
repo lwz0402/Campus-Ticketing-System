@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>管理员控制台 - 学校汇演票务系统</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="page page--admin">
+    <header class="toolbar">
+      <div class="toolbar__group">
+        <h1>管理员控制台</h1>
+        <span class="toolbar__subtitle">管理票务项目、座位票号与检票</span>
+      </div>
+      <div class="toolbar__group">
+        <button class="button" id="btn-back-home" type="button">返回首页</button>
+        <button class="button button--danger" id="btn-logout" type="button">退出登录</button>
+      </div>
+    </header>
+
+    <main class="admin-container">
+      <div class="admin-shell">
+        <aside class="admin-sidebar" aria-label="功能导航">
+          <div class="admin-sidebar__brand">
+            <span>控制台</span>
+          </div>
+          <nav class="admin-tabs" role="tablist">
+            <div class="admin-tab-group">
+              <div class="admin-tab-group__title">票务</div>
+              <button
+                class="admin-tab admin-tab--active"
+                type="button"
+                data-view="seats"
+                role="tab"
+                id="tab-seats"
+                aria-controls="view-seats"
+                aria-selected="true"
+                tabindex="0"
+              >
+                座位 / 检票
+              </button>
+            </div>
+            <div class="admin-tab-group">
+              <div class="admin-tab-group__title">销售</div>
+              <button
+                class="admin-tab"
+                type="button"
+                data-view="merch"
+                role="tab"
+                id="tab-merch"
+                aria-controls="view-merch"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                商品 / 订单
+              </button>
+            </div>
+            <div class="admin-tab-group">
+              <div class="admin-tab-group__title">系统</div>
+              <button
+                class="admin-tab"
+                type="button"
+                data-view="accounts"
+                role="tab"
+                id="tab-accounts"
+                aria-controls="view-accounts"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                账号管理
+              </button>
+              <button
+                class="admin-tab"
+                type="button"
+                data-view="audit"
+                role="tab"
+                id="tab-audit"
+                aria-controls="view-audit"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                审计 / 备份
+              </button>
+            </div>
+          </nav>
+        </aside>
+
+        <section class="admin-content">
+          <div
+            class="admin-view admin-view--active"
+            data-view="seats"
+            role="tabpanel"
+            id="view-seats"
+            aria-labelledby="tab-seats"
+          >
+            <section class="panel panel--workbench" id="console-workbench">
+              <div class="console-workbench__row">
+                <div class="console-workbench__left">
+                  <label class="form-label">选择项目</label>
+                  <div class="project-selector">
+                    <input
+                      id="input-project-search"
+                      type="search"
+                      list="project-options"
+                      placeholder="搜索项目名称或输入项目名"
+                      autocomplete="off"
+                    />
+                    <datalist id="project-options"></datalist>
+                    <button class="button button--secondary" id="btn-open-project" type="button">打开</button>
+                  </div>
+                  <div class="console-recent">
+                    <span class="hint">最近使用</span>
+                    <ul id="project-list" class="project-list project-list--compact"></ul>
+                    <template id="project-item-template">
+                      <li class="project-list__item">
+                        <div class="project-list__meta">
+                          <strong class="project-list__name">项目名称</strong>
+                          <span class="project-list__stats">0×0，可售座位 0</span>
+                        </div>
+                        <button class="button project-list__open" type="button">打开</button>
+                      </li>
+                    </template>
+                  </div>
+                </div>
+                <div class="console-workbench__right">
+                  <div class="project-summary" id="project-summary">未选择项目</div>
+                  <div class="panel__actions">
+                    <button class="button button--secondary" id="btn-edit-project" type="button">编辑项目</button>
+                    <button class="button button--primary" id="btn-new-project" type="button">新建项目</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="console-tabs" role="tablist" aria-label="票务控制台">
+              <button class="console-tab is-active" type="button" data-console-tab="seats" role="tab">
+                座位图管理
+              </button>
+              <button class="console-tab" type="button" data-console-tab="tickets" role="tab">
+                票号管理
+              </button>
+              <button class="console-tab" type="button" data-console-tab="checkin" role="tab">
+                检票管理
+              </button>
+            </div>
+
+            <section class="console-panel" data-console-panel="seats">
+              <section class="panel panel--workspace">
+                <div class="workspace-header">
+                  <div>
+                    <label class="workspace-title">
+                      项目名称：
+                      <input id="input-project-name" type="text" placeholder="选择或新建项目" />
+                    </label>
+                    <p class="hint" id="workspace-hint">
+                      选择一个项目后即可编辑座位。支持拉框或单点选择座位，再设置票价或禁用。
+                    </p>
+                  </div>
+                  <div class="workspace-actions">
+                    <button class="button" id="btn-reset-selection" type="button">清除选中</button>
+                    <button class="button" id="btn-sync-project" type="button">同步最新状态</button>
+                    <button class="button button--danger" id="btn-delete-project" type="button">
+                      删除该项目
+                    </button>
+                    <button class="button button--primary" id="btn-save-project" type="button">
+                      保存修改
+                    </button>
+                    <a class="button" href="/ops.html" target="_blank" rel="noopener">运维面板</a>
+                  </div>
+                </div>
+
+                <div class="workspace-body">
+                  <section class="panel panel--controls">
+                    <h3>座位设置</h3>
+                    <div class="form">
+                      <label>
+                        选中座位数量：
+                        <strong id="selected-count">0</strong>
+                      </label>
+                      <label>
+                        设置票价（元）
+                        <input id="input-seat-price" type="number" min="0" step="1" />
+                      </label>
+                      <button class="button button--primary" id="btn-apply-price" type="button">
+                        启用并设置价格
+                      </button>
+                      <button class="button" id="btn-disable-seats" type="button">禁用选中座位</button>
+                    </div>
+                    <div class="zone-summary">
+                      <h4>票价区域统计</h4>
+                      <ul id="zone-summary-list"></ul>
+                    </div>
+                    <div class="seats-batch">
+                      <h4>批量设置</h4>
+                      <p class="hint">按行区间或价位批量锁座/开售。行留空表示全部；价位可填入 100,200。</p>
+                      <div class="form-inline">
+                        <label>
+                          行（起止）
+                          <input id="input-batch-row-start" type="number" min="1" />
+                          <span>到</span>
+                          <input id="input-batch-row-end" type="number" min="1" />
+                        </label>
+                        <label>
+                          价位（逗号分隔）
+                          <input id="input-batch-price" type="text" placeholder="如 100,200" />
+                        </label>
+                        <label>
+                          状态
+                          <select id="select-batch-status">
+                            <option value="available">可售</option>
+                            <option value="locked">锁定</option>
+                            <option value="disabled">禁用</option>
+                          </select>
+                        </label>
+                        <button class="button" id="btn-apply-batch-status" type="button">应用</button>
+                      </div>
+                    </div>
+                    <div class="price-legend">
+                      <h4>票价分区颜色</h4>
+                      <ul id="price-legend-list"></ul>
+                    </div>
+                    <p class="hint">
+                      * 座位编号将按行自动生成，例如“5排3座”。中轴左侧使用奇数，右侧使用偶数。
+                    </p>
+                    <p class="status-message" id="admin-status"></p>
+                  </section>
+
+                  <section class="panel panel--canvas">
+                    <div class="stage-label">舞台</div>
+                    <div id="seat-canvas" class="seat-canvas" data-role="canvas">
+                      <p class="placeholder">请选择或新建售票项目。</p>
+                    </div>
+                  </section>
+                </div>
+              </section>
+            </section>
+
+            <section class="console-panel" data-console-panel="tickets" hidden>
+              <section class="panel">
+                <div class="panel__heading">
+                  <div>
+                    <h3>票号配置</h3>
+                    <p class="hint">设置票号生成规则，并对票号进行维护与导出。</p>
+                  </div>
+                </div>
+                <div class="form">
+                  <label>
+                    票号模式
+                    <select id="select-ticketing-mode">
+                      <option value="random">随机票号</option>
+                      <option value="sequence">流水票号</option>
+                    </select>
+                  </label>
+                  <div id="ticketing-sequence-config" class="sequence-config hidden">
+                    <label>
+                      票号模板（使用 X 表示流水位，如 297812025XXXX）
+                      <input id="input-ticket-template" type="text" placeholder="297812025XXXX" />
+                    </label>
+                    <label>
+                      流水码起始值
+                      <input id="input-ticket-start" type="text" placeholder="0001" />
+                    </label>
+                  </div>
+                  <div class="ticketing-actions">
+                    <button class="button button--primary" id="btn-apply-ticketing" type="button" disabled>
+                      确认修改
+                    </button>
+                    <button class="button" id="btn-cancel-ticketing" type="button" disabled>
+                      取消修改
+                    </button>
+                    <button class="button" id="btn-regenerate-ticketing" type="button">
+                      重新生成当前票号
+                    </button>
+                    <button class="button button--secondary" id="btn-open-ticket-coupons" type="button">
+                      优惠券 / 折扣
+                    </button>
+                  </div>
+                  <p class="hint">* 设置流水码时需保证模板尾部为连续的 X，流水位长度需与起始值长度一致。</p>
+                  <p class="status-message" id="ticketing-status"></p>
+                </div>
+              </section>
+
+              <section class="panel panel--table">
+                <div class="panel__heading">
+                  <h3>座位票号管理</h3>
+                  <div class="seat-table-actions">
+                    <label class="input-search">
+                      <span class="visually-hidden">搜索座位票号</span>
+                      <input
+                        id="input-seat-search"
+                        type="search"
+                        placeholder="搜索座位、票号或票价"
+                        autocomplete="off"
+                      />
+                    </label>
+                    <button class="button" id="btn-refresh-seat-table" type="button">刷新列表</button>
+                  </div>
+                </div>
+                <div class="seat-table-wrapper table--sticky-wrapper">
+                  <table id="seat-ticket-table" class="seat-table table--sticky">
+                    <thead>
+                      <tr>
+                        <th>排号</th>
+                        <th>座位号</th>
+                        <th>状态</th>
+                        <th>检票</th>
+                        <th>票号</th>
+                        <th>票价</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <div class="table-pagination">
+                  <button class="button" id="btn-seat-prev" type="button">上一页</button>
+                  <span id="seat-page-info">第 1 页</span>
+                  <button class="button" id="btn-seat-next" type="button">下一页</button>
+                </div>
+                <div class="panel__heading">
+                  <div class="seat-table-actions">
+                    <div class="dropdown">
+                      <button class="button" id="btn-export-project-menu" type="button">导出</button>
+                      <div class="dropdown__menu" id="export-project-menu" hidden>
+                        <button class="button" id="btn-export-project" type="button">项目 JSON</button>
+                        <button class="button" id="btn-export-seats-csv" type="button">座位 CSV</button>
+                        <button class="button" id="btn-export-seats-png" type="button">座位 PNG</button>
+                        <button class="button" id="btn-export-seats-json" type="button">座位 JSON</button>
+                        <button class="button" id="btn-download-project-template" type="button">导入模板</button>
+                      </div>
+                    </div>
+                    <button class="button" id="btn-import-project" type="button">导入项目JSON</button>
+                    <input class="hidden" id="input-import-file" type="file" accept="application/json" />
+                  </div>
+                </div>
+                <p class="status-message" id="seat-table-status"></p>
+              </section>
+            </section>
+
+            <section class="console-panel" data-console-panel="checkin" hidden>
+              <section class="panel">
+                <div class="panel__heading">
+                  <div>
+                    <h3>快速检票</h3>
+                    <p class="hint">扫码枪或手输票号后回车即可检票。</p>
+                  </div>
+                </div>
+                <div class="form-inline">
+                  <label class="input-search">
+                    <span class="visually-hidden">票号</span>
+                    <input id="input-quick-checkin" type="text" placeholder="输入或扫描票号" autocomplete="off" />
+                  </label>
+                  <button class="button button--primary" id="btn-quick-checkin" type="button">检票</button>
+                </div>
+                <p class="status-message" id="quick-checkin-status"></p>
+              </section>
+
+              <section class="panel panel--table">
+                <div class="panel__heading">
+                  <div>
+                    <h3>检票记录（当前项目）</h3>
+                    <p class="hint">展示最近检票结果，便于排查与复核。</p>
+                  </div>
+                  <div class="seat-table-actions">
+                    <button class="button" id="btn-refresh-inline-checkins" type="button">刷新检票记录</button>
+                  </div>
+                </div>
+                <div class="table--sticky-wrapper">
+                  <table class="seat-table table--sticky" id="inline-checkin-table">
+                    <thead>
+                      <tr>
+                        <th>时间</th>
+                        <th>座位</th>
+                        <th>票号</th>
+                        <th>状态</th>
+                        <th>检票人</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <p class="status-message" id="inline-checkin-status"></p>
+
+                <div class="panel__heading panel__heading--mt">
+                  <div>
+                    <h3>检票控制（当前项目）</h3>
+                    <p class="hint">可设置开始检票时间与每分钟检票人数上限（用于现场控流）。</p>
+                  </div>
+                </div>
+                <div class="form-inline">
+                  <label>
+                    开始检票时间
+                    <input id="input-checkin-start-at" type="datetime-local" />
+                  </label>
+                  <label>
+                    每分钟检票人数（0 表示不限）
+                    <input id="input-checkin-limit" type="number" min="0" max="5000" step="1" placeholder="如 60" />
+                  </label>
+                  <button class="button button--primary" id="btn-save-checkin-control" type="button">保存检票控制</button>
+                  <button class="button button--secondary" id="btn-clear-checkin-control" type="button">清除限制</button>
+                </div>
+                <p class="status-message" id="checkin-control-status"></p>
+              </section>
+            </section>
+          </div>
+
+          <div class="admin-view" data-view="accounts" role="tabpanel" id="view-accounts" aria-labelledby="tab-accounts" hidden>
+        <section class="panel panel--account-manager">
+          <div class="panel__heading">
+            <div>
+              <h2>账号管理</h2>
+              <p class="hint">为管理员与售票员创建、修改或删除登录账号。</p>
+            </div>
+          </div>
+          <div class="account-manager-grid">
+            <form id="account-form" class="form account-form">
+              <label>
+                用户名
+                <input id="input-account-username" type="text" autocomplete="off" />
+              </label>
+              <label>
+                密码
+                <input id="input-account-password" type="password" autocomplete="new-password" />
+              </label>
+              <label>
+                角色
+                <select id="select-account-role">
+                  <option value="sales">售票员</option>
+                  <option value="admin">管理员</option>
+                </select>
+              </label>
+              <button class="button button--primary" type="submit">添加账号</button>
+            </form>
+            <div class="account-list-wrapper account-list-wrapper--full">
+              <table id="account-table" class="account-table">
+                <thead>
+                  <tr>
+                    <th>用户名</th>
+                    <th>角色</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <p class="status-message" id="account-status"></p>
+        </section>
+      </div>
+
+          <div class="admin-view" data-view="merch" role="tabpanel" id="view-merch" aria-labelledby="tab-merch" hidden>
+        <section class="panel panel--merch">
+          <div class="panel__heading">
+            <div>
+              <h2>商品管理</h2>
+              <p class="hint">上传图片、设置价格和库存，销售终端会实时获取。</p>
+            </div>
+            <div class="panel__actions">
+              <button class="button button--primary" id="btn-open-merch-form" type="button">新增商品</button>
+              <button class="button" id="btn-refresh-merch" type="button">刷新数据</button>
+              <button class="button button--secondary" id="btn-go-checkout-modes" type="button">
+                设置结账模式
+              </button>
+            </div>
+          </div>
+          <div class="merch-grid">
+            <div class="merch-list" id="merch-product-list"></div>
+          </div>
+        </section>
+
+        <section class="panel panel--merch-presale">
+          <div class="panel__heading">
+            <div>
+              <h3>预售统计（不占库存）</h3>
+              <p class="hint">统计各商品已签发预购券数量、已核销数量与未核销余量。</p>
+            </div>
+            <div class="panel__actions">
+              <button class="button" id="btn-refresh-presale-summary" type="button">刷新统计</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="table" id="presale-summary-table">
+              <thead>
+                <tr>
+                  <th>商品</th>
+                  <th>单价</th>
+                  <th>预售签发</th>
+                  <th>已核销</th>
+                  <th>未核销</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="status-message" id="presale-summary-status"></p>
+        </section>
+
+        <section class="panel panel--merch-modes">
+          <div class="panel__heading">
+            <h3>结账模式</h3>
+            <p class="hint">示例：原价、内单 9 折、立减 10 元等。</p>
+          </div>
+          <div class="panel__actions">
+            <button class="button button--primary" id="btn-open-mode-form" type="button">新增结账模式</button>
+          </div>
+
+          <table class="table" id="checkout-mode-table">
+            <thead>
+              <tr>
+                <th>名称</th>
+                <th>类型</th>
+                <th>参数</th>
+                <th>说明</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </section>
+
+        <section class="panel panel--merch-orders">
+          <div class="panel__heading">
+            <div>
+              <h3>销售记录</h3>
+              <p class="hint">可在此筛选、分页查看销售记录，并支持多格式导出 / 导入。</p>
+            </div>
+            <div class="panel__actions">
+              <button class="button button--primary" id="btn-new-order" type="button">新增记录</button>
+              <button class="button" id="btn-refresh-orders" type="button">刷新记录</button>
+              <div class="dropdown">
+                <button class="button" id="btn-export-orders-menu" type="button">导出</button>
+                <div class="dropdown__menu" id="export-orders-menu" hidden>
+                  <button class="button" id="btn-export-orders" type="button">JSON</button>
+                  <button class="button" id="btn-export-orders-csv" type="button">CSV</button>
+                  <button class="button" id="btn-export-orders-xls" type="button">Excel</button>
+                  <button class="button" id="btn-export-orders-pdf" type="button">PDF</button>
+                  <button class="button" id="btn-download-orders-template" type="button">导入模板</button>
+                </div>
+              </div>
+              <button class="button" id="btn-import-orders" type="button">导入 JSON</button>
+              <button class="button button--danger" id="btn-clear-orders" type="button">全部清除</button>
+              <input class="hidden" id="input-import-orders" type="file" accept="application/json" />
+            </div>
+          </div>
+          <details class="foldable" open>
+            <summary>筛选条件（点击收起/展开）</summary>
+            <div class="form-inline" id="orders-filter-bar">
+              <label>
+                日期自
+                <input id="input-orders-since" type="date" />
+              </label>
+              <label>
+                至
+                <input id="input-orders-until" type="date" />
+              </label>
+              <label>
+                操作人
+                <input id="input-orders-handler" type="text" placeholder="用户名" />
+              </label>
+              <label>
+                结账模式
+                <select id="select-orders-mode">
+                  <option value="">全部</option>
+                </select>
+              </label>
+              <label class="input-search">
+                <input id="input-orders-keyword" type="search" placeholder="备注/商品关键字" />
+              </label>
+              <button class="button" id="btn-apply-orders-filter" type="button">筛选</button>
+            </div>
+          </details>
+          <table class="table" id="merch-orders-table">
+            <thead>
+              <tr>
+	                <th class="table__col--select">
+                  <input type="checkbox" id="orders-select-all" />
+                </th>
+                <th>时间</th>
+                <th>商品明细</th>
+                <th>结账模式</th>
+                <th>金额</th>
+                <th>操作人</th>
+                <th>备注</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="table-pagination">
+            <button class="button" id="btn-orders-prev" type="button">上一页</button>
+            <span id="orders-page-info">第 1 页</span>
+            <button class="button" id="btn-orders-next" type="button">下一页</button>
+          </div>
+          <p class="status-message" id="order-form-status"></p>
+        </section>
+
+      </div>
+
+          <div class="admin-view" data-view="audit" role="tabpanel" id="view-audit" aria-labelledby="tab-audit" hidden>
+	        <section class="panel panel--audit">
+	          <div class="panel__heading">
+	            <div>
+              <h3>审计日志</h3>
+              <p class="hint">记录批量导入导出、清除订单、检票重置、批量座位操作等敏感操作。</p>
+            </div>
+            <div class="panel__actions">
+              <button class="button" id="btn-refresh-audit" type="button">刷新</button>
+              <div class="dropdown">
+                <button class="button" id="btn-export-audit-menu" type="button">导出</button>
+                <div class="dropdown__menu" id="export-audit-menu" hidden>
+                  <button class="button" id="btn-export-audit" type="button">审计 JSON</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="table--sticky-wrapper">
+          <table class="table table--sticky" id="audit-table">
+            <thead>
+              <tr>
+                <th>时间</th>
+                <th>操作人</th>
+                <th>动作</th>
+                <th>详情</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          </div>
+          <div class="table-pagination">
+            <button class="button" id="btn-audit-prev" type="button">上一页</button>
+            <span id="audit-page-info">第 1 页</span>
+            <button class="button" id="btn-audit-next" type="button">下一页</button>
+          </div>
+        </section>
+
+        <section class="panel panel--audit">
+          <div class="panel__heading">
+            <div>
+              <h3>备份管理</h3>
+              <p class="hint">定时自动备份 state.json，支持一键恢复。</p>
+            </div>
+            <div class="panel__actions">
+              <button class="button" id="btn-refresh-backups" type="button">刷新备份列表</button>
+            </div>
+          </div>
+          <div class="table--sticky-wrapper">
+          <table class="table table--sticky" id="backup-table">
+            <thead>
+              <tr>
+                <th>文件名</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          </div>
+          <p class="hint">恢复操作会覆盖当前状态，请谨慎操作。</p>
+        </section>
+      </div>
+        </section>
+      </div>
+    </main>
+
+    <dialog id="dialog-seat-detail" class="modal">
+      <article class="modal__card">
+        <header class="modal__header">
+          <h3>票务详情</h3>
+          <button class="button button--ghost" value="cancel" aria-label="关闭">×</button>
+        </header>
+        <div class="modal__body" id="seat-detail-body"></div>
+        <footer class="modal__footer">
+          <button class="button button--secondary" value="cancel">关闭</button>
+        </footer>
+      </article>
+    </dialog>
+
+    <dialog id="dialog-new-project" class="modal">
+      <form method="dialog" class="modal__content">
+        <h3>新建售票项目</h3>
+        <div class="form">
+          <label>
+            项目名称
+            <input id="new-project-name" type="text" required />
+          </label>
+          <div class="form-inline">
+            <label>
+              行数（纵向）
+              <input id="new-project-rows" type="number" min="1" max="200" required />
+            </label>
+            <label>
+              列数（横向）
+              <input id="new-project-cols" type="number" min="1" max="200" required />
+            </label>
+          </div>
+          <label>
+            初始票号模式
+            <select id="new-project-ticketing-mode">
+              <option value="random" selected>随机票号</option>
+              <option value="sequence">流水票号</option>
+            </select>
+          </label>
+          <div id="new-project-sequence" class="sequence-config hidden">
+            <label>
+              票号模板（以 X 作为流水位）
+              <input id="new-project-ticket-template" type="text" placeholder="297812025XXXX" />
+            </label>
+            <label>
+              流水码起始值
+              <input id="new-project-ticket-start" type="text" placeholder="0001" />
+            </label>
+          </div>
+          <p class="status-message" id="new-project-status"></p>
+          <menu class="modal__actions">
+            <button class="button button--link" value="cancel">取消</button>
+            <button class="button button--primary" id="btn-create-project" type="button">创建</button>
+          </menu>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="dialog-merch-product" class="modal">
+      <form id="merch-product-form" class="modal__content" autocomplete="off" method="dialog">
+        <h3>新增 / 编辑商品</h3>
+        <div class="form">
+          <input id="input-merch-id" type="hidden" />
+          <label>
+            商品名称
+            <input id="input-merch-name" type="text" required />
+          </label>
+          <label>
+            标价（元）
+            <input id="input-merch-price" type="number" min="0" step="0.01" required />
+          </label>
+          <label>
+            库存数量
+            <input id="input-merch-stock" type="number" min="0" step="1" required />
+          </label>
+          <label>
+            商品描述
+            <textarea id="input-merch-description" rows="3" placeholder="可选"></textarea>
+          </label>
+          <label>
+            商品图片（自动压缩至 ≤10MB）
+            <input id="input-merch-image" type="file" accept="image/*" />
+          </label>
+          <div class="form__actions">
+            <button class="button button--primary" type="submit">保存商品</button>
+            <button class="button" type="button" id="btn-reset-merch-form">重置</button>
+            <button class="button button--link" type="button" data-close-dialog="dialog-merch-product">
+              取消
+            </button>
+          </div>
+          <p class="status-message" id="merch-form-status"></p>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="dialog-mode-form" class="modal">
+      <form id="checkout-mode-form" class="modal__content" method="dialog">
+        <h3>新增 / 编辑结账模式</h3>
+        <div class="form checkout-mode-form">
+          <input id="input-mode-id" type="hidden" />
+          <label>
+            名称
+            <input id="input-mode-name" type="text" required />
+          </label>
+          <label>
+            类型
+            <select id="select-mode-type">
+              <option value="standard">原价（无参数）</option>
+              <option value="discount">整单折扣</option>
+              <option value="fullcut">满减</option>
+            </select>
+          </label>
+          <label class="mode-field mode-field--discount hidden">
+            折扣（几折）
+            <input id="input-mode-discount" type="number" min="0.1" max="10" step="0.1" value="9.5" />
+          </label>
+          <div class="mode-field mode-field--fullcut hidden">
+            <label>
+              满额（元）
+              <input id="input-mode-threshold" type="number" min="0" step="0.01" />
+            </label>
+            <label>
+              减免（元）
+              <input id="input-mode-cut" type="number" min="0" step="0.01" />
+            </label>
+            <label>
+              可叠加次数（0 表示无限）
+              <input id="input-mode-stack" type="number" min="0" step="1" value="0" />
+            </label>
+          </div>
+          <label>
+            说明
+            <input id="input-mode-description" type="text" />
+          </label>
+          <div class="form__actions">
+            <button class="button button--primary" type="submit">保存模式</button>
+            <button class="button" type="button" id="btn-reset-mode-form">重置</button>
+            <button class="button button--link" type="button" data-close-dialog="dialog-mode-form">取消</button>
+          </div>
+          <p class="status-message" id="mode-form-status"></p>
+        </div>
+      </form>
+    </dialog>
+
+	    <dialog id="dialog-order-form" class="modal">
+	      <form id="merch-order-form" class="modal__content merch-order-form" method="dialog">
+	        <h3>新增 / 编辑销售记录</h3>
+	        <div class="form">
+          <input id="input-order-id" type="hidden" />
+          <label>
+            商品明细（每行“名称,单价,数量”）
+            <textarea id="input-order-items" rows="4" placeholder="商品名称,88,2"></textarea>
+          </label>
+          <label>
+            结账模式
+            <select id="select-order-checkout-mode"></select>
+          </label>
+          <label>
+            操作人
+            <input id="input-order-handler" type="text" placeholder="记录人（可选）" />
+          </label>
+          <label>
+            备注
+            <input id="input-order-note" type="text" placeholder="可选" />
+          </label>
+          <label>
+            记录时间
+            <input id="input-order-time" type="datetime-local" />
+          </label>
+          <div class="form__actions">
+            <button class="button button--primary" type="submit">保存记录</button>
+            <button class="button" type="button" id="btn-reset-order-form">重置</button>
+            <button class="button button--link" type="button" data-close-dialog="dialog-order-form">取消</button>
+          </div>
+	        </div>
+	      </form>
+	    </dialog>
+
+	    <dialog id="dialog-voucher-admin" class="modal">
+	      <form id="voucher-admin-form" class="modal__content" method="dialog">
+	        <h3>预购券管理</h3>
+	        <div class="form">
+	          <div class="panel panel--subtle">
+	            <div id="voucher-admin-info" class="hint">加载中...</div>
+	          </div>
+	          <label>
+	            新券码（用于“换码/重发”，留空则自动生成）
+	            <input id="input-voucher-new-code" type="text" placeholder="扫描/输入新券码（可选）" />
+	          </label>
+	          <label>
+	            操作原因/备注（可选）
+	            <textarea id="input-voucher-reason" rows="3" placeholder="例如：卡片丢失 / 印错 / 误核销等"></textarea>
+	          </label>
+	          <label>
+	            二次确认：输入当前券码
+	            <input id="input-voucher-confirm" type="text" placeholder="输入券码以启用危险操作" />
+	          </label>
+	          <div class="form__actions">
+	            <button class="button button--primary" id="btn-voucher-replace" type="button">换码 / 重发</button>
+	            <button class="button" id="btn-voucher-undo-redeem" type="button">撤销核销</button>
+	            <button class="button button--danger" id="btn-voucher-void" type="button">作废</button>
+	            <button class="button button--danger" id="btn-voucher-refund" type="button">退款</button>
+	            <button class="button button--link" type="button" data-close-dialog="dialog-voucher-admin">关闭</button>
+	          </div>
+	          <p class="status-message" id="voucher-admin-status"></p>
+	        </div>
+	      </form>
+	    </dialog>
+
+	    <dialog id="dialog-ticket-coupons" class="modal modal--wide">
+	      <div class="modal__content">
+	        <div class="panel__heading">
+	          <div>
+	            <h3>购票折扣与优惠券</h3>
+	            <p class="hint">先创建折扣规则（几张票几折，可限制票价），再批量签发优惠券供售票员使用。</p>
+	          </div>
+	          <button class="button button--link" type="button" data-close-dialog="dialog-ticket-coupons">关闭</button>
+	        </div>
+	        <div class="account-manager-grid account-manager-grid--ticket-coupons">
+	          <section class="panel">
+	            <div class="panel__heading">
+	              <h4>折扣规则</h4>
+	              <button class="button button--primary" id="btn-new-ticket-rule" type="button">新增规则</button>
+	            </div>
+	            <div class="table-wrap">
+	              <table class="table" id="ticket-rule-table">
+	                <thead>
+	                  <tr>
+	                    <th>名称</th>
+	                    <th>张数</th>
+	                    <th>折扣</th>
+	                    <th>限制票价</th>
+	                    <th>状态</th>
+	                    <th>操作</th>
+	                  </tr>
+	                </thead>
+	                <tbody></tbody>
+	              </table>
+	            </div>
+	            <p class="status-message" id="ticket-rule-status"></p>
+	          </section>
+
+	          <section class="panel">
+	            <div class="panel__heading">
+	              <h4>签发优惠券</h4>
+	            </div>
+	            <div class="form">
+	              <label>
+	                选择规则
+	                <select id="select-ticket-rule"></select>
+	              </label>
+	              <label>
+	                批量签发数量（1~200）
+	                <input id="input-ticket-coupon-quantity" type="number" min="1" max="200" value="1" />
+	              </label>
+	              <label>
+	                自定义券码（可选，每行一个；留空自动生成）
+	                <textarea
+	                  id="input-ticket-coupon-codes"
+	                  rows="5"
+	                  placeholder="示例：\nBYYS-20251201-001\nBYYS-20251201-002"
+	                ></textarea>
+	                <span class="hint">若填写 N 行，将优先使用这 N 个券码；数量大于 N 时其余自动生成补齐。</span>
+	              </label>
+	              <button class="button button--primary" id="btn-issue-ticket-coupons" type="button">签发</button>
+	            </div>
+	            <hr class="divider" />
+	            <div class="panel__heading">
+	              <h4>优惠券列表</h4>
+	            </div>
+	            <div class="seat-table-actions seat-table-actions--gap-sm">
+	              <input id="input-ticket-coupon-search" type="search" placeholder="搜索券码" />
+	              <select id="select-ticket-coupon-status">
+	                <option value="">全部</option>
+	                <option value="issued">未用</option>
+	                <option value="used">已用</option>
+	                <option value="voided">作废</option>
+	              </select>
+	              <button class="button" id="btn-refresh-ticket-coupons" type="button">刷新</button>
+	            </div>
+	            <div class="table-wrap table-wrap--scroll">
+	              <table class="table" id="ticket-coupon-table">
+	                <thead>
+	                  <tr>
+	                    <th>券码</th>
+	                    <th>规则</th>
+	                    <th>剩余</th>
+	                    <th>状态</th>
+	                    <th>签发</th>
+	                    <th>操作</th>
+	                  </tr>
+	                </thead>
+	                <tbody></tbody>
+	              </table>
+	            </div>
+	            <p class="status-message" id="ticket-coupon-status"></p>
+	          </section>
+	        </div>
+	      </div>
+	    </dialog>
+
+	    <dialog id="dialog-ticket-rule-form" class="modal">
+	      <form id="ticket-rule-form" class="modal__content" method="dialog">
+	        <h3>新增 / 编辑折扣规则</h3>
+	        <div class="form">
+	          <input id="input-ticket-rule-id" type="hidden" />
+	          <label>
+	            名称
+	            <input id="input-ticket-rule-name" type="text" placeholder="如 内部票 9 折（4 张）" />
+	          </label>
+	          <label>
+	            优惠张数
+	            <input id="input-ticket-rule-count" type="number" min="1" value="1" />
+	          </label>
+	          <label>
+	            折扣（几折）
+	            <input id="input-ticket-rule-discount" type="number" min="0.1" max="10" step="0.1" value="9.0" />
+	          </label>
+	          <label>
+	            限制票价（可选，逗号分隔，如 100,200；留空表示不限）
+	            <input id="input-ticket-rule-prices" type="text" placeholder="如 100,200" />
+	          </label>
+	          <label>
+	            启用
+	            <select id="select-ticket-rule-enabled">
+	              <option value="true" selected>启用</option>
+	              <option value="false">停用</option>
+	            </select>
+	          </label>
+	          <div class="form__actions">
+	            <button class="button button--primary" type="submit">保存</button>
+	            <button class="button" type="button" data-close-dialog="dialog-ticket-rule-form">取消</button>
+	          </div>
+	          <p class="status-message" id="ticket-rule-form-status"></p>
+	        </div>
+	      </form>
+	    </dialog>
+
+	    <script src="/socket.io/socket.io.js"></script>
+	    <script src="/js/admin.js" type="module"></script>
+	  </body>
+	</html>

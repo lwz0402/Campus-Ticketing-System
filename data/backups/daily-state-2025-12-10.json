@@ -1,0 +1,25 @@
+{
+  "projects": {},
+  "accounts": {},
+  "merch": {
+    "products": {},
+    "checkoutModes": {
+      "8730a67e-c508-4671-b7be-8050e3b0bb15": {
+        "id": "8730a67e-c508-4671-b7be-8050e3b0bb15",
+        "name": "原价",
+        "type": "standard",
+        "value": 1,
+        "threshold": null,
+        "cutAmount": null,
+        "stackLimit": null,
+        "description": "按标价结算",
+        "enabled": true,
+        "createdAt": 1765379381695,
+        "updatedAt": 1765379381695
+      }
+    },
+    "orders": []
+  },
+  "auditLog": [],
+  "checkInLogs": []
+}

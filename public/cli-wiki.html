@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CLI 使用手册 - 学校汇演票务系统</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="page page--cli-wiki">
+    <main class="cli-wiki-container">
+      <h1>CLI 模式使用手册</h1>
+      <p>在 <code>cli.html</code> 中可通过命令行完成系统操作。查询类命令无需登录；写操作请先执行 <code>login</code>。</p>
+
+      <h2>基础</h2>
+      <ul>
+        <li><code>help</code> 查看支持的命令</li>
+        <li><code>login &lt;username&gt; &lt;password&gt;</code> 登录（支持 admin / sales）</li>
+        <li><code>logout</code> 退出登录</li>
+        <li><code>whoami</code> 查看当前会话</li>
+      </ul>
+
+      <h2>项目 / 座位</h2>
+      <ul>
+        <li><code>projects</code> 列出项目</li>
+        <li><code>select &lt;projectId&gt;</code> 选择项目</li>
+        <li><code>project-add &lt;name&gt; &lt;rows&gt; &lt;cols&gt;</code> 创建项目（admin）</li>
+        <li><code>project</code> 查看当前项目摘要</li>
+        <li><code>seats-summary</code> 按状态统计</li>
+        <li><code>seat-status &lt;row&gt; &lt;col&gt; &lt;status&gt; [price]</code> （admin）修改座位状态，行列从 1 开始</li>
+        <li><code>seat-bulk-status seats=r1c1,r1c2 status=&lt;status&gt; [price=]</code> 批量修改状态（admin）</li>
+        <li><code>seat-range-status start=r1c1 end=r3c5 status=&lt;status&gt; [price=]</code> 矩形范围批量改状态（admin）</li>
+        <li><code>ticket-range-status start=T0001 end=T0010 status=&lt;status&gt; [price=]</code> 按票号区间改状态（admin）</li>
+        <li><code>seats-export &lt;csv|png&gt;</code> 导出当前项目座位 CSV/PNG</li>
+        <li><code>seat-price-lock price=&lt;数字&gt; status=&lt;available|locked|disabled&gt; [rows=1-5]</code> 按价位（可选行区间）批量锁座/开售</li>
+        <li><code>seat-map</code> 输出字符座位图（⬜可售/🟦锁定/🟧已售/🟩已检/⬛未启用）</li>
+        <li><code>checkin &lt;ticketCode&gt;</code> 检票当前项目</li>
+        <li><code>checkin-stats</code> 查看检票统计</li>
+        <li><code>checkin-logs [limit] [projectId]</code> 检票日志（admin）</li>
+        <li><code>checkin-clear &lt;ticketCode&gt;</code> 清除检票状态（admin）</li>
+        <li><code>checkin-batch codes=code1,code2</code> 批量检票</li>
+        <li><code>checkin-range start=T0001 end=T0010 action=check|clear</code> 票号区间检票或清除（admin）</li>
+        <li><code>checkin-pending [list|retry|clear]</code> 查看/重试/清空 CLI 待重试列表</li>
+      </ul>
+
+      <h2>文创售卖</h2>
+      <ul>
+        <li><code>merch-products</code> 查看商品</li>
+        <li><code>merch-modes</code> 查看结账模式</li>
+        <li><code>checkout-mode-add name=&lt;n&gt; type=&lt;standard|percentage|fullcut&gt; [value=] [threshold=] [cut=] [stack=] [description=]</code> 新增结账模式（admin）</li>
+        <li><code>checkout-mode-toggle &lt;id&gt; &lt;on|off&gt;</code> 启用/停用结账模式（admin）</li>
+        <li><code>merch-add &lt;name&gt; &lt;price&gt; &lt;stock&gt; [desc=xx] [img=dataUrl]</code> 上传商品（admin）。图片可为空将使用占位图。</li>
+        <li><code>merch-update &lt;id&gt; [name=] [price=] [stock=] [desc=] [img=] [enabled=true|false]</code> 更新商品信息（admin）</li>
+        <li><code>merch-toggle &lt;id&gt; &lt;on|off&gt;</code> 启用/停用商品（admin）</li>
+        <li><code>merch-bulk-toggle ids=id1,id2 &lt;on|off&gt;</code> 批量启用/停用商品（admin）</li>
+        <li><code>merch-bulk-price ids=id1,id2 price=&lt;value&gt;</code> 批量设置价格（admin）</li>
+        <li><code>merch-bulk-stock ids=id1,id2 stock=&lt;value&gt;</code> 批量设置库存（admin）</li>
+        <li><code>merch-order items=prod1:2,prod2:1 [mode=&lt;modeId&gt;] [note=备注]</code> 新增订单（sales/admin）</li>
+        <li><code>merch-order-balance total=&lt;amount&gt; count=&lt;n&gt; [note=] [item=] [method=] [handledBy=]</code> 平账批量生成订单（admin）</li>
+        <li><code>merch-orders</code> 查看订单（admin）</li>
+        <li><code>merch-order-update &lt;id&gt; items=prod:qty,... [mode=] [note=]</code> 更新订单（admin）</li>
+        <li><code>merch-order-del &lt;id&gt;</code> 删除订单（admin）</li>
+        <li><code>audit-logs [limit=] [action=]</code> 查看审计日志（admin）</li>
+        <li><code>audit-export [limit=] [action=]</code> 导出审计日志（JSON，admin）</li>
+      </ul>
+
+      <h2>账户（admin）</h2>
+      <ul>
+        <li><code>accounts</code> 列出账户</li>
+        <li><code>account-add &lt;username&gt; &lt;password&gt; &lt;role&gt;</code> 创建账户</li>
+        <li><code>account-role &lt;username&gt; &lt;role&gt;</code> 修改角色</li>
+        <li><code>account-pass &lt;username&gt; &lt;newPassword&gt;</code> 重置密码</li>
+        <li><code>account-del &lt;username&gt;</code> 删除账号</li>
+      </ul>
+
+      <h2>格式说明</h2>
+      <ul>
+        <li>行列号从 1 开始（CLI 内部会自动转换）。</li>
+        <li>字符串参数可用引号包裹，例如 <code>note="线下已收款"</code>。</li>
+        <li>若命令执行失败，会返回接口错误信息。</li>
+      </ul>
+    </main>
+  </body>
+</html>

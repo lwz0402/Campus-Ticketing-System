@@ -1,0 +1,39 @@
+{
+  "projects": {},
+  "accounts": {
+    "admin": {
+      "username": "admin",
+      "passwordHash": "$2b$10$VEkshPpT/GHKEaCmcjNQO.kiwRE9Jul1GoQErWeZRt7szLCf3YPV.",
+      "role": "admin",
+      "createdAt": 1764082259123,
+      "updatedAt": 1764082259123
+    },
+    "sales": {
+      "username": "sales",
+      "passwordHash": "$2b$10$ruSe8NBjJ7yeXpxPY45VZelVvsEu8bFSdOlv1JeirWwiOFb2gd0y.",
+      "role": "sales",
+      "createdAt": 1764082259177,
+      "updatedAt": 1764082259177
+    }
+  },
+  "merch": {
+    "products": {},
+    "checkoutModes": {
+      "eccd8179-2a4c-458c-be23-1e86feabcb1b": {
+        "id": "eccd8179-2a4c-458c-be23-1e86feabcb1b",
+        "name": "原价",
+        "type": "standard",
+        "value": 1,
+        "threshold": null,
+        "cutAmount": null,
+        "stackLimit": null,
+        "description": "按标价结算",
+        "enabled": true,
+        "createdAt": 1764082259062,
+        "updatedAt": 1764082259062
+      }
+    },
+    "orders": []
+  },
+  "checkInLogs": []
+}

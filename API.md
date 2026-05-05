@@ -482,7 +482,7 @@ type TicketCoupon = {
 ### PUT `/api/merch/modes/:modeId`
 
 - 权限: `admin`
-- 请求体: 同新增接口，字段均可选
+- 请求体: 同新增接口，字段均可选git init
 - 返回: `{ mode: CheckoutMode }`
 - 作用: 编辑结账模式
 

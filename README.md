@@ -183,9 +183,7 @@ node main.js
 
 ## License
 
-This repository currently uses the license declared in `package.json`:
-
-`ISC`
+This repository is released under the `MIT` License.
 
 ## Credits
 

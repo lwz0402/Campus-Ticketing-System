@@ -1,8 +1,41 @@
-
-# Playwright
+# Dependencies
 node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-/playwright/.auth/
+
+# Test and report artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+playwright/.auth/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*
+
+# Runtime data and temporary files
+data/locks/
+data/backups/
+data/state.json.tmp.*
+*.pid
+*.seed
+
+# Uploaded assets generated at runtime
+public/uploads/merch/
+
+# Local certificates
+certs/*.pem
+certs/*.key
+certs/*.crt
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
